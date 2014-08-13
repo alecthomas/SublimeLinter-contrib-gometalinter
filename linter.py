@@ -26,6 +26,5 @@ class Gometalinter(Linter):
     default_type = highlight.ERROR
 
     def run(self, cmd, code):
-        print(cmd)
         files = [f for f in listdir(dirname(self.filename)) if f.endswith('.go')]
         return self.tmpdir(cmd, files, code)
