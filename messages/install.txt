@@ -7,4 +7,4 @@ This linter plugin for SublimeLinter provides an interface to gometalinter.
 Before this plugin will activate, you *must*
 follow the installation instructions here:
 
-https://github.com/Alec Thomas/SublimeLinter-contrib-gometalinter
+https://github.com/alecthomas/SublimeLinter-contrib-gometalinter
