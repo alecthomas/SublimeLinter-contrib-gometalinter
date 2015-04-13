@@ -14,6 +14,7 @@ Before using this plugin, you must ensure that `gometalinter` is installed on yo
 1. Install `gometalinter` by typing the following in a terminal:
    ```
    go get github.com/alecthomas/gometalinter
+   gometalinter --install --update
    ```
 
 ### Linter configuration
