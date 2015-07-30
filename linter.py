@@ -25,6 +25,20 @@ class Gometalinter(Linter):
     error_stream = util.STREAM_BOTH
     default_type = highlight.ERROR
 
+    def __init__(self, view, syntax):
+        """Initialize and load GOPATH from settings if present."""
+        Linter.__init__(self, view, syntax)
+
+        gopath = self.get_view_settings().get('gopath')
+        if gopath:
+            if self.env:
+                self.env['GOPATH'] = gopath
+            else:
+                self.env = {'GOPATH': gopath}
+            print('sublimelinter: GOPATH={}'.format(self.env['GOPATH']))
+        else:
+            print('sublimelinter: using default GOPATH')
+
     def run(self, cmd, code):
         files = [f for f in listdir(dirname(self.filename)) if f.endswith('.go')]
         return self.tmpdir(cmd, files, code)
