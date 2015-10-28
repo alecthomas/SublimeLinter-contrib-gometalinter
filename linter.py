@@ -19,7 +19,7 @@ from subprocess import check_output
 class Gometalinter(Linter):
     """Provides an interface to gometalinter."""
 
-    syntax = ('go', 'gosublime-go')
+    syntax = ('go', 'gosublime-go', 'gotools')
     cmd = 'gometalinter * .'
     regex = r'(?:[^:]+):(?P<line>\d+):(?P<col>\d+)?:(?:(?P<warning>warning)|(?P<error>error)):\s*(?P<message>.*)'
     error_stream = util.STREAM_BOTH
