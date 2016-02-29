@@ -10,10 +10,9 @@
 
 """This module exports the Gometalinter plugin class."""
 
-from os import listdir
-from os.path import dirname
-from SublimeLinter.lint import Linter, util, highlight
-from subprocess import check_output
+import os
+
+from SublimeLinter.lint import Linter, highlight, util
 
 
 class Gometalinter(Linter):
@@ -37,8 +36,8 @@ class Gometalinter(Linter):
                 self.env = {'GOPATH': gopath}
             print('sublimelinter: GOPATH={}'.format(self.env['GOPATH']))
         else:
-            print('sublimelinter: using default GOPATH')
+            print('sublimelinter: using system GOPATH={}'.format(os.environ.get('GOPATH', '')))
 
     def run(self, cmd, code):
-        files = [f for f in listdir(dirname(self.filename)) if f.endswith('.go')]
+        files = [f for f in os.listdir(os.path.dirname(self.filename)) if f.endswith('.go')]
         return self.tmpdir(cmd, files, code)
