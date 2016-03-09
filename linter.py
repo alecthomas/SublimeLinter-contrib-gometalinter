@@ -52,11 +52,14 @@ class Gometalinter(Linter):
         return self.tmpdir(cmd, files, code)
 
     def _in_place_lint(self, cmd):
+        env = os.environ.copy()
+        if self.env:
+            env.update(self.env)
         try:
             filename = os.path.basename(self.filename)
             cmd = cmd + ['-I', filename]
             print('gometalinter: linting {}: {}'.format(filename, ' '.join(map(shlex.quote, cmd))))
-            output = subprocess.check_output(cmd)
+            output = subprocess.check_output(cmd, env=os.environ)
         except subprocess.CalledProcessError as e:
             if e.returncode > 1:
                 print('sublimelinter: some gometalinter sub-linters failed')
