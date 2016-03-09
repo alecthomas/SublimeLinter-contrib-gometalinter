@@ -12,7 +12,6 @@
 
 import os
 import shlex
-import subprocess
 
 from SublimeLinter.lint import Linter, highlight, util
 from SublimeLinter.lint.persist import settings
@@ -48,20 +47,13 @@ class Gometalinter(Linter):
             return self._in_place_lint(cmd)
 
     def _live_lint(self, cmd, code):
+        print('gometalinter: linting {}'.format(self.filename))
         files = [f for f in os.listdir(os.path.dirname(self.filename)) if f.endswith('.go')]
         return self.tmpdir(cmd, files, code)
 
     def _in_place_lint(self, cmd):
-        env = os.environ.copy()
-        if self.env:
-            env.update(self.env)
-        try:
-            filename = os.path.basename(self.filename)
-            cmd = cmd + ['-I', filename]
-            print('gometalinter: linting {}: {}'.format(filename, ' '.join(map(shlex.quote, cmd))))
-            output = subprocess.check_output(cmd, env=os.environ)
-        except subprocess.CalledProcessError as e:
-            if e.returncode > 1:
-                print('sublimelinter: some gometalinter sub-linters failed')
-            output = e.output
-        return output.decode('utf-8', errors='replace')
+        filename = os.path.basename(self.filename)
+        cmd = cmd + ['-I', filename]
+        print('gometalinter: linting {}: {}'.format(filename, ' '.join(map(shlex.quote, cmd))))
+        out = util.communicate(cmd, output_stream=util.STREAM_STDOUT)
+        return out or ''
