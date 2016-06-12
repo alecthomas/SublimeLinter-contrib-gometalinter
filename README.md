@@ -25,6 +25,7 @@ In order for `gometalinter` to be executed by SublimeLinter, you must ensure tha
 Once you have installed `gometalinter`, you can proceed to install the SublimeLinter-contrib-gometalinter plugin if it is not yet installed.
 
 ### Plugin installation
+
 Please use [Package Control][pc] to install the linter plugin. This will ensure that the plugin will be updated when new versions are available. If you want to install from source so you can modify the source code, you probably know what you are doing so we won’t cover that here.
 
 To install via Package Control, do the following:
@@ -33,8 +34,20 @@ To install via Package Control, do the following:
 
 1. When the plugin list appears, type `gometalinter`. Among the entries you should see `SublimeLinter-contrib-gometalinter`. If that entry is not highlighted, use the keyboard or mouse to select it.
 
+## Usage
+
+If you are launching Sublime from a window manager, it's possible your GOPATH will not be set correctly. There are two ways around that:
+
+1. Launch Sublime from a shell with GOPATH already set correctly.
+2. Set the `gopath` setting in the linter configuration for SublimeLinter-contrib-gometalinter.
+
 ## Settings
 For general information on how SublimeLinter works with settings, please see [Settings][settings]. For information on generic linter settings, please see [Linter Settings][linter-settings].
+
+Two additional settings are supported by SublimeLinter-contrib-gometalinter:
+
+- `gopath` overrides the system GOPATH.
+- `lint_mode=background` will force
 
 ## Contributing
 If you would like to contribute enhancements or fixes, please do the following:
