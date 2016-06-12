@@ -44,10 +44,7 @@ If you are launching Sublime from a window manager, it's possible your GOPATH wi
 ## Settings
 For general information on how SublimeLinter works with settings, please see [Settings][settings]. For information on generic linter settings, please see [Linter Settings][linter-settings].
 
-Two additional settings are supported by SublimeLinter-contrib-gometalinter:
-
-- `gopath` overrides the system GOPATH.
-- `lint_mode=background` will force
+Go vendoring will not work with SublimeLinter when `lint_mode=background`. Use `save`, `load/save` or `manual`.
 
 ## Contributing
 If you would like to contribute enhancements or fixes, please do the following:
