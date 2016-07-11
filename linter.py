@@ -55,5 +55,5 @@ class Gometalinter(Linter):
         filename = os.path.basename(self.filename)
         cmd = cmd + ['-I', filename]
         print('gometalinter: in-place linting {}: {}'.format(filename, ' '.join(map(shlex.quote, cmd))))
-        out = util.communicate(cmd, output_stream=util.STREAM_STDOUT)
+        out = util.communicate(cmd, output_stream=util.STREAM_STDOUT, env=self.env)
         return out or ''
