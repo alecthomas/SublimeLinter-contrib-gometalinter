@@ -30,15 +30,22 @@ class Gometalinter(Linter):
         """Initialize and load GOPATH from settings if present."""
         Linter.__init__(self, view, syntax)
 
+        if not self.env:
+            self.env = {}
+
         gopath = self.get_view_settings().get('gopath')
         if gopath:
-            if self.env:
-                self.env['GOPATH'] = gopath
-            else:
-                self.env = {'GOPATH': gopath}
-            print('sublimelinter: GOPATH={}'.format(self.env['GOPATH']))
+            self.env['GOPATH'] = gopath
+            print('sublimelinter: (custom) GOPATH={}'.format(self.env['GOPATH']))
         else:
-            print('sublimelinter: using system GOPATH={}'.format(os.environ.get('GOPATH', '')))
+            print('sublimelinter: (system) GOPATH={}'.format(os.environ.get('GOPATH', '')))
+
+        goroot = self.get_view_settings().get('goroot')
+        if goroot:
+            self.env['GOROOT'] = goroot
+            print('sublimelinter: (custom) GOROOT={}'.format(self.env['GOROOT']))
+        else:
+            print('sublimelinter: (system) GOROOT={}'.format(os.environ.get('GOROOT', '')))
 
     def run(self, cmd, code):
         if settings.get('lint_mode') == 'background':
