@@ -20,7 +20,7 @@ from SublimeLinter.lint.persist import settings
 class Gometalinter(Linter):
     """Provides an interface to gometalinter."""
 
-    syntax = ('go', 'gosublime-go', 'gotools')
+    syntax = ('go', 'gosublime-go', 'gotools', 'anacondago-go')
     cmd = 'gometalinter * .'
     regex = r'(?:[^:]+):(?P<line>\d+):(?P<col>\d+)?:(?:(?P<warning>warning)|(?P<error>error)):\s*(?P<message>.*)'
     error_stream = util.STREAM_BOTH
@@ -54,9 +54,9 @@ class Gometalinter(Linter):
             return self._in_place_lint(cmd)
 
     def _live_lint(self, cmd, code):
-        print('gometalinter: live linting {}'.format(self.filename))
+        print('gometalinter: live linting {} with {}'.format(self.filename, ' '.join(cmd)))
         files = [f for f in os.listdir(os.path.dirname(self.filename)) if f.endswith('.go')]
-        return self.tmpdir(cmd, files, code)
+        return tmpdir(self, cmd, files, code)
 
     def _in_place_lint(self, cmd):
         filename = os.path.basename(self.filename)
@@ -64,3 +64,14 @@ class Gometalinter(Linter):
         print('gometalinter: in-place linting {}: {}'.format(filename, ' '.join(map(shlex.quote, cmd))))
         out = util.communicate(cmd, output_stream=util.STREAM_STDOUT, env=self.env)
         return out or ''
+
+
+def tmpdir(self, cmd, files, code):
+     """Run an external executable using a temp dir filled with files and return its output."""
+     return util.tmpdir(
+         cmd,
+         files,
+         self.filename,
+         code,
+         output_stream=self.error_stream,
+         env=self.env)
