@@ -24,7 +24,7 @@ class Gometalinter(Linter):
     """Provides an interface to gometalinter."""
 
     syntax = ('go', 'gosublime-go', 'gotools', 'anacondago-go')
-    cmd = 'gometalinter * .'
+    cmd = 'gometalinter --fast .'
     regex = r'(?:[^:]+):(?P<line>\d+):(?P<col>\d+)?:(?:(?P<warning>warning)|(?P<error>error)):\s*(?P<message>.*)'
     error_stream = util.STREAM_BOTH
     default_type = highlight.ERROR
@@ -36,6 +36,7 @@ class Gometalinter(Linter):
         if not self.env:
             self.env = os.environ.copy()
 
+    def _set_env_for_view(self):
         gopath = self.get_view_settings().get('gopath')
         if gopath:
             self.env['GOPATH'] = gopath
@@ -51,6 +52,7 @@ class Gometalinter(Linter):
             print('sublimelinter: (system) GOROOT={}'.format(os.environ.get('GOROOT', '')))
 
     def run(self, cmd, code):
+        self._set_env_for_view()
         if settings.get('lint_mode') == 'background':
             return self._live_lint(cmd, code)
         else:
@@ -77,14 +79,10 @@ class Gometalinter(Linter):
 
 def tmpdir(self, dir, cmd, files, filename, code):
     """Run an external executable using a temp dir filled with files and return its output."""
-    with tempfile.TemporaryDirectory(dir=dir, prefix=".gometalinter") as d:
+    with tempfile.TemporaryDirectory(dir=dir, prefix=".gometalinter-") as tmpdir:
         for f in files:
-            try:
-                os.makedirs(os.path.join(d, os.path.dirname(f)))
-            except OSError:
-                pass
-
-            target = os.path.join(d, f)
+            f = os.path.join(dir, f)
+            target = os.path.join(tmpdir, os.path.basename(f))
 
             if os.path.basename(target) == os.path.basename(filename):
                 # source file hasn't been saved since change, so update it from our live buffer
@@ -96,7 +94,7 @@ def tmpdir(self, dir, cmd, files, filename, code):
             else:
                 os.link(f, target)
 
-        out = communicate(cmd, output_stream=util.STREAM_STDOUT, env=self.env, cwd=d)
+        out = communicate(cmd, output_stream=util.STREAM_STDOUT, env=self.env, cwd=tmpdir)
     return out or ''
 
 
