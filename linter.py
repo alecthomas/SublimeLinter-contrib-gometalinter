@@ -12,7 +12,6 @@
 
 import os
 import shlex
-import shutil
 import tempfile
 import subprocess
 
@@ -29,30 +28,7 @@ class Gometalinter(Linter):
     error_stream = util.STREAM_BOTH
     default_type = highlight.ERROR
 
-    def __init__(self, view, syntax):
-        """Initialize and load GOPATH from settings if present."""
-        Linter.__init__(self, view, syntax)
-
-        if not self.env:
-            self.env = os.environ.copy()
-
-    def _set_env_for_view(self):
-        gopath = self.get_view_settings().get('gopath')
-        if gopath:
-            self.env['GOPATH'] = gopath
-            print('sublimelinter: (custom) GOPATH={}'.format(self.env['GOPATH']))
-        else:
-            print('sublimelinter: (system) GOPATH={}'.format(os.environ.get('GOPATH', '')))
-
-        goroot = self.get_view_settings().get('goroot')
-        if goroot:
-            self.env['GOROOT'] = goroot
-            print('sublimelinter: (custom) GOROOT={}'.format(self.env['GOROOT']))
-        else:
-            print('sublimelinter: (system) GOROOT={}'.format(os.environ.get('GOROOT', '')))
-
     def run(self, cmd, code):
-        self._set_env_for_view()
         if settings.get('lint_mode') == 'background':
             return self._live_lint(cmd, code)
         else:
