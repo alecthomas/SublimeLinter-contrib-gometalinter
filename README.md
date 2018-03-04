@@ -3,8 +3,6 @@ SublimeLinter-contrib-gometalinter
 
 This linter plugin for [SublimeLinter][docs] provides an interface to [gometalinter](https://github.com/alecthomas/gometalinter). It will be used with files that have the “Go” syntax.
 
-Please note that you will have to use "load/save" linting if using Go 1.5+ vendoring. "background" linting will not work.
-
 ## Installation
 SublimeLinter 3 must be installed in order to use this plugin. If SublimeLinter 3 is not installed, please follow the instructions [here][installation].
 
