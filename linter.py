@@ -63,8 +63,8 @@ def tmpdir(cmd, dir, files, filename, code, env=None):
     """Run an external executable using a temp dir filled with files and return its output."""
     with tempfile.TemporaryDirectory(dir=dir, prefix=".gometalinter-") as tmpdir:
         for f in files:
+            target = os.path.join(tmpdir, f)
             f = os.path.join(dir, f)
-            target = os.path.join(tmpdir, os.path.basename(f))
 
             if os.path.basename(target) == os.path.basename(filename):
                 # source file hasn't been saved since change, so update it from our live buffer
