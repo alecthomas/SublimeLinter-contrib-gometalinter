@@ -35,7 +35,7 @@ class Gometalinter(Linter):
 
     def _dir_env(self):
         settings = self.get_view_settings()
-        dir = self.get_working_dir(settings)
+        dir = os.path.dirname(self.filename)
         env = self.get_environment(settings)
         return dir, env
 
