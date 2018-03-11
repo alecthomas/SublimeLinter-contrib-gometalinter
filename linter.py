@@ -41,17 +41,23 @@ class Gometalinter(Linter):
 
     def _live_lint(self, cmd, code):
         dir, env = self._dir_env()
+        if not dir:
+            print('gometalinter: skipped linting of unsaved file')
+            return
         filename = os.path.basename(self.filename)
         cmd = cmd + ['-I', filename]
         print('gometalinter: live linting {} in {}: {}'.format(filename, dir, ' '.join(map(shlex.quote, cmd))))
         files = [f for f in os.listdir(dir) if f.endswith('.go')]
         if len(files) > 40:
-            print("too many files ({}), live linting skipped".format(len(files)))
+            print("gometalinter: too many files ({}), live linting skipped".format(len(files)))
             return ''
         return tmpdir(cmd, dir, files, self.filename, code, env=env)
 
     def _in_place_lint(self, cmd):
         dir, env = self._dir_env()
+        if not dir:
+            print('gometalinter: skipped linting of unsaved file')
+            return
         filename = os.path.basename(self.filename)
         cmd = cmd + ['-I', filename]
         print('gometalinter: in-place linting {}: {}'.format(filename, ' '.join(map(shlex.quote, cmd))))
