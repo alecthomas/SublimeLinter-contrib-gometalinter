@@ -45,7 +45,7 @@ class Gometalinter(Linter):
             print('gometalinter: skipped linting of unsaved file')
             return
         filename = os.path.basename(self.filename)
-        cmd = cmd + ['-I', filename]
+        cmd = cmd + ['-I', '^'+filename]
         print('gometalinter: live linting {} in {}: {}'.format(filename, dir, ' '.join(map(shlex.quote, cmd))))
         files = [f for f in os.listdir(dir) if f.endswith('.go')]
         if len(files) > 40:
@@ -59,7 +59,7 @@ class Gometalinter(Linter):
             print('gometalinter: skipped linting of unsaved file')
             return
         filename = os.path.basename(self.filename)
-        cmd = cmd + ['-I', filename]
+        cmd = cmd + ['-I', '^'+filename]
         print('gometalinter: in-place linting {}: {}'.format(filename, ' '.join(map(shlex.quote, cmd))))
         out = util.communicate(cmd, output_stream=util.STREAM_STDOUT, env=env, cwd=dir)
         return out or ''
