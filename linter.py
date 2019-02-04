@@ -35,14 +35,8 @@ class Gometalinter(Linter):
         else:
             return self._in_place_lint(cmd)
 
-    def _dir_env(self):
-        settings = self.get_view_settings()
-        dir = os.path.dirname(self.filename)
-        env = self.get_environment(settings)
-        return dir, env
-
     def _live_lint(self, cmd, code):
-        dir, env = self._dir_env()
+        dir = os.path.dirname(self.filename)
         if not dir:
             print('gometalinter: skipped linting of unsaved file')
             return
@@ -53,36 +47,35 @@ class Gometalinter(Linter):
         if len(files) > 40:
             print("gometalinter: too many files ({}), live linting skipped".format(len(files)))
             return ''
-        return tmpdir(cmd, dir, files, self.filename, code, env=env)
+        return self.tmpdir(cmd, dir, files, self.filename, code)
 
     def _in_place_lint(self, cmd):
-        dir, env = self._dir_env()
+        dir = os.path.dirname(self.filename)
         if not dir:
             print('gometalinter: skipped linting of unsaved file')
             return
         filename = os.path.basename(self.filename)
         cmd = cmd + ['-I', '^'+filename]
         print('gometalinter: in-place linting {}: {}'.format(filename, ' '.join(map(shlex.quote, cmd))))
-        out = util.communicate(cmd, output_stream=util.STREAM_STDOUT, env=env, cwd=dir)
+        out = self.communicate(cmd)
         return out or ''
 
+    def tmpdir(self, cmd, dir, files, filename, code):
+        """Run an external executable using a temp dir filled with files and return its output."""
+        with tempfile.TemporaryDirectory(dir=dir, prefix=".gometalinter-") as tmpdir:
+            for f in files:
+                target = os.path.join(tmpdir, f)
+                f = os.path.join(dir, f)
 
-def tmpdir(cmd, dir, files, filename, code, env=None):
-    """Run an external executable using a temp dir filled with files and return its output."""
-    with tempfile.TemporaryDirectory(dir=dir, prefix=".gometalinter-") as tmpdir:
-        for f in files:
-            target = os.path.join(tmpdir, f)
-            f = os.path.join(dir, f)
+                if os.path.basename(target) == os.path.basename(filename):
+                    # source file hasn't been saved since change, so update it from our live buffer
+                    with open(target, 'wb') as f:
+                        if isinstance(code, str):
+                            code = code.encode('utf8')
 
-            if os.path.basename(target) == os.path.basename(filename):
-                # source file hasn't been saved since change, so update it from our live buffer
-                with open(target, 'wb') as f:
-                    if isinstance(code, str):
-                        code = code.encode('utf8')
+                        f.write(code)
+                else:
+                    os.link(f, target)
 
-                    f.write(code)
-            else:
-                os.link(f, target)
-
-        out = util.communicate(cmd, output_stream=util.STREAM_STDOUT, env=env, cwd=tmpdir)
-    return out or ''
+            out = self.communicate(cmd)
+        return out or ''
